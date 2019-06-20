@@ -17,6 +17,9 @@ package com.ahmetkocu.pdfrendereview.listener;
 
 import android.view.MotionEvent;
 
+import com.ahmetkocu.pdfrendereview.link.LinkHandler;
+import com.ahmetkocu.pdfrendereview.model.LinkTapEvent;
+
 public class Callbacks {
 
     /**
@@ -69,7 +72,7 @@ public class Callbacks {
     /**
      * Call back object to call when clicking link
      */
-    //private LinkHandler linkHandler;
+    private LinkHandler linkHandler;
 
     public void setOnLoadComplete(OnLoadCompleteListener onLoadCompleteListener) {
         this.onLoadCompleteListener = onLoadCompleteListener;
@@ -165,7 +168,7 @@ public class Callbacks {
         }
     }
 
-    /*public void setLinkHandler(LinkHandler linkHandler) {
+    public void setLinkHandler(LinkHandler linkHandler) {
         this.linkHandler = linkHandler;
     }
 
@@ -173,5 +176,5 @@ public class Callbacks {
         if (linkHandler != null) {
             linkHandler.handleLinkEvent(event);
         }
-    }*/
+    }
 }

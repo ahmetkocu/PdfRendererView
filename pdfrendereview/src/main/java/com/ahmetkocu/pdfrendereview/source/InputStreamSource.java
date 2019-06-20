@@ -21,6 +21,8 @@ import android.os.ParcelFileDescriptor;
 import com.ahmetkocu.pdfrendereview.MyPdfRenderer;
 import com.ahmetkocu.pdfrendereview.util.FileUtils;
 import com.ahmetkocu.pdfrendereview.util.Util;
+import com.shockwave.pdfium.PdfDocument;
+import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,11 +37,16 @@ public class InputStreamSource implements DocumentSource {
     }
 
     @Override
-    public MyPdfRenderer createDocument(Context context, String password) throws IOException {
-        File documentFile = FileUtils.copyByteArray(context, Util.toByteArray(inputStream));
-        ParcelFileDescriptor mFileDescriptor = ParcelFileDescriptor.open(documentFile, ParcelFileDescriptor.MODE_READ_ONLY);
-        MyPdfRenderer mPdfRenderer = new MyPdfRenderer(mFileDescriptor);
+    public PdfDocument createDocument(Context context, PdfiumCore core, String password) throws IOException {
+        return core.newDocument(Util.toByteArray(inputStream), password);
+    }
 
-        return mPdfRenderer;
+    @Override
+    public MyPdfRenderer createDocument(Context context, String password) throws IOException {
+        FileUtils.writeResponseBodyToDisk(context, Util.toByteArray(inputStream));
+        File documentFile = FileUtils.readCacheToByteArray(context, FileUtils.fileName);
+        ParcelFileDescriptor mFileDescriptor = ParcelFileDescriptor.open(documentFile, ParcelFileDescriptor.MODE_READ_ONLY);
+
+        return new MyPdfRenderer(mFileDescriptor);
     }
 }

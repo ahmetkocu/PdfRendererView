@@ -17,10 +17,13 @@ package com.ahmetkocu.pdfrendereview.source;
 
 
 import android.content.Context;
+import android.graphics.pdf.PdfRenderer;
 import android.os.ParcelFileDescriptor;
 
 import com.ahmetkocu.pdfrendereview.MyPdfRenderer;
 import com.ahmetkocu.pdfrendereview.util.FileUtils;
+import com.shockwave.pdfium.PdfDocument;
+import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +34,13 @@ public class AssetSource implements DocumentSource {
 
     public AssetSource(String assetName) {
         this.assetName = assetName;
+    }
+
+    @Override
+    public PdfDocument createDocument(Context context, PdfiumCore core, String password) throws IOException {
+        File f = FileUtils.fileFromAsset(context, assetName);
+        ParcelFileDescriptor pfd = ParcelFileDescriptor.open(f, ParcelFileDescriptor.MODE_READ_ONLY);
+        return core.newDocument(pfd, password);
     }
 
     @Override

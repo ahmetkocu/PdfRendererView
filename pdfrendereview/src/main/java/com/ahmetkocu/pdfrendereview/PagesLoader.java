@@ -16,11 +16,11 @@
 package com.ahmetkocu.pdfrendereview;
 
 import android.graphics.RectF;
-import android.util.SizeF;
 
 import com.ahmetkocu.pdfrendereview.util.Constants;
 import com.ahmetkocu.pdfrendereview.util.MathUtils;
 import com.ahmetkocu.pdfrendereview.util.Util;
+import com.shockwave.pdfium.util.SizeF;
 
 import static com.ahmetkocu.pdfrendereview.util.Constants.PRELOAD_OFFSET;
 

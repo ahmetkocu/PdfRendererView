@@ -15,8 +15,9 @@
  */
 package com.ahmetkocu.pdfrendereview.util;
 
-import android.util.Size;
-import android.util.SizeF;
+
+import com.shockwave.pdfium.util.Size;
+import com.shockwave.pdfium.util.SizeF;
 
 public class PageSizeCalculator {
 

@@ -17,9 +17,11 @@ package com.ahmetkocu.pdfrendereview;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Size;
 
 import com.ahmetkocu.pdfrendereview.source.DocumentSource;
+import com.shockwave.pdfium.PdfDocument;
+import com.shockwave.pdfium.PdfiumCore;
+import com.shockwave.pdfium.util.Size;
 
 class DecodingAsyncTask extends AsyncTask<Void, Void, Throwable> {
 
@@ -27,36 +29,50 @@ class DecodingAsyncTask extends AsyncTask<Void, Void, Throwable> {
 
     private PDFView pdfView;
 
+    private PdfiumCore pdfiumCore;
     private String password;
     private DocumentSource docSource;
     private int[] userPages;
     private PdfFile pdfFile;
-    private MyPdfRenderer pdfRenderer;
-    private Context context;
 
-    DecodingAsyncTask(DocumentSource docSource, String password, int[] userPages, PDFView pdfView, MyPdfRenderer pdfRenderer) {
+    DecodingAsyncTask(DocumentSource docSource, String password, int[] userPages, PDFView pdfView, PdfiumCore pdfiumCore) {
         this.docSource = docSource;
         this.userPages = userPages;
         this.cancelled = false;
         this.pdfView = pdfView;
         this.password = password;
-        this.pdfRenderer = pdfRenderer;
-        this.context = pdfView.getContext();
+        this.pdfiumCore = pdfiumCore;
+    }
+
+    DecodingAsyncTask(DocumentSource docSource, String password, int[] userPages, PDFView pdfView) {
+        this.docSource = docSource;
+        this.userPages = userPages;
+        this.cancelled = false;
+        this.pdfView = pdfView;
+        this.password = password;
     }
 
     @Override
     protected Throwable doInBackground(Void... params) {
         try {
-            pdfRenderer = this.docSource.createDocument(context, password);
-            pdfFile = new PdfFile(pdfRenderer, pdfView.getPageFitPolicy(), getViewSize(),
-                    userPages, pdfView.isSwipeVertical(), pdfView.getSpacingPx(), pdfView.doAutoSpacing());
+            if (this.pdfView.isUseNative) {
+                // Native PDF Renderer can use
+                MyPdfRenderer pdfDocument = docSource.createDocument(pdfView.getContext(), password);
+                pdfFile = new PdfFile(pdfDocument, pdfView.getPageFitPolicy(), getViewSize(),
+                        userPages, pdfView.isSwipeVertical(), pdfView.getSpacingPx(), pdfView.doAutoSpacing());
+            }
+            else {
+                PdfDocument pdfDocument = docSource.createDocument(pdfView.getContext(), pdfiumCore, password);
+                pdfFile = new PdfFile(pdfiumCore, pdfDocument, pdfView.getPageFitPolicy(), getViewSize(),
+                        userPages, pdfView.isSwipeVertical(), pdfView.getSpacingPx(), pdfView.doAutoSpacing());
+            }
             return null;
         } catch (Throwable t) {
             return t;
         }
     }
 
-    private Size getViewSize() {
+    private com.shockwave.pdfium.util.Size getViewSize() {
         return new Size(pdfView.getWidth(), pdfView.getHeight());
     }
 

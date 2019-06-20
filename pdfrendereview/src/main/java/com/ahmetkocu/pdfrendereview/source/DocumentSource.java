@@ -18,9 +18,12 @@ package com.ahmetkocu.pdfrendereview.source;
 import android.content.Context;
 
 import com.ahmetkocu.pdfrendereview.MyPdfRenderer;
+import com.shockwave.pdfium.PdfDocument;
+import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.IOException;
 
 public interface DocumentSource {
+    PdfDocument createDocument(Context context, PdfiumCore core, String password) throws IOException;
     MyPdfRenderer createDocument(Context context, String password) throws IOException;
 }

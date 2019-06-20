@@ -20,6 +20,8 @@ import android.os.ParcelFileDescriptor;
 
 import com.ahmetkocu.pdfrendereview.MyPdfRenderer;
 import com.ahmetkocu.pdfrendereview.util.FileUtils;
+import com.shockwave.pdfium.PdfDocument;
+import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,13 +35,24 @@ public class ByteArraySource implements DocumentSource {
     }
 
     @Override
-    public MyPdfRenderer createDocument(Context context, String password) throws IOException {
-        File documentFile = FileUtils.copyByteArray(context, data);
-        ParcelFileDescriptor mFileDescriptor = ParcelFileDescriptor.open(documentFile, ParcelFileDescriptor.MODE_READ_ONLY);
-        MyPdfRenderer mPdfRenderer = new MyPdfRenderer(mFileDescriptor);
-
-        return mPdfRenderer;
+    public PdfDocument createDocument(Context context, PdfiumCore core, String password) throws IOException {
+        return core.newDocument(data, password);
     }
 
+    @Override
+    public MyPdfRenderer createDocument(Context context, String password) throws IOException {
+        boolean canWrite = FileUtils.writeResponseBodyToDisk(context, data);
+        if (!canWrite) {
+            throw new IOException("Can not write pdf file to cache");
+        }
 
+        File documentFile = FileUtils.readCacheToByteArray(context, FileUtils.fileName);
+        ParcelFileDescriptor mFileDescriptor = ParcelFileDescriptor.open(documentFile, ParcelFileDescriptor.MODE_READ_ONLY);
+
+        if (mFileDescriptor == null) {
+            throw new IOException("Can not create ParcelFileDescriptor");
+        }
+
+        return new MyPdfRenderer(mFileDescriptor);
+    }
 }

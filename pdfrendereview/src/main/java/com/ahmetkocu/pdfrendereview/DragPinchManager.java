@@ -16,7 +16,6 @@
 package com.ahmetkocu.pdfrendereview;
 
 import android.graphics.PointF;
-import android.util.SizeF;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -24,6 +23,7 @@ import android.view.View;
 
 import com.ahmetkocu.pdfrendereview.scroll.ScrollHandle;
 import com.ahmetkocu.pdfrendereview.util.SnapEdge;
+import com.shockwave.pdfium.util.SizeF;
 
 import static com.ahmetkocu.pdfrendereview.util.Constants.Pinch.MAXIMUM_ZOOM;
 import static com.ahmetkocu.pdfrendereview.util.Constants.Pinch.MINIMUM_ZOOM;

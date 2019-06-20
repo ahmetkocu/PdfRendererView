@@ -25,6 +25,8 @@ import java.io.OutputStream;
 
 public class FileUtils {
 
+    public static final String fileName = "document_cache" + ".pdf";
+
     private FileUtils() {
         // Prevents instantiation
     }
@@ -60,9 +62,7 @@ public class FileUtils {
         }
     }
 
-    public static File copyByteArray(Context context, byte[] array) throws IOException {
-        String fileName = "document.pdf";
-
+    public static File readCacheToByteArray(Context context, String fileName) throws IOException {
         // In this sample, we read a PDF from the assets directory.
         File file = new File(context.getCacheDir(), fileName);
         if (!file.exists()) {
@@ -80,5 +80,50 @@ public class FileUtils {
         }
 
         return file;
+    }
+
+    public static File copyByteArray(Context context, byte[] array) throws IOException {
+        // In this sample, we read a PDF from the assets directory.
+        File file = new File(context.getCacheDir(), fileName);
+        if (!file.exists()) {
+            // Since PdfRenderer cannot handle the compressed asset file directly, we copy it into
+            // the cache directory.
+            InputStream asset = context.getAssets().open(fileName);
+            FileOutputStream output = new FileOutputStream(file);
+            final byte[] buffer = new byte[1024];
+            int size;
+            while ((size = asset.read(buffer)) != -1) {
+                output.write(buffer, 0, size);
+            }
+            asset.close();
+            output.close();
+        }
+
+        return file;
+    }
+
+    public static boolean writeResponseBodyToDisk(Context context, byte[] data) {
+        try {
+            File futureStudioIconFile = new File(context.getCacheDir()
+                    + "/" + fileName);
+
+            OutputStream outputStream = null;
+
+            try {
+                outputStream = new FileOutputStream(futureStudioIconFile);
+                outputStream.write(data);
+                outputStream.flush();
+
+                return true;
+            } catch (IOException e) {
+                return false;
+            } finally {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
