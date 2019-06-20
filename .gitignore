@@ -100,3 +100,6 @@ lint/tmp/
 # lint/reports/
 .idea
 .gradle
+
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
